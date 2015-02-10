@@ -21,14 +21,7 @@ class TesterServiceProvider extends ServiceProvider {
      */
     public function boot()
     {
-        // Fix for PSR-4
-        //$this->package('jenssegers/ab', 'ab', realpath(__DIR__));
 
-        // Start the A/B tracking when routing starts.
-        $this->app->before(function($request)
-        {
-            $this->app['ab']->track($request);
-        });
     }
 
     /**
