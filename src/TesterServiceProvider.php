@@ -22,7 +22,7 @@ class TesterServiceProvider extends ServiceProvider {
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/config/config.php' => config_path('laravel-ab.php'),
+            __DIR__.'/config/config.php' => config_path('ab.php'),
         ]);
     }
 
