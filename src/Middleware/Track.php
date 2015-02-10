@@ -1,0 +1,22 @@
+<?php namespace Jenssegers\AB\Middleware;
+
+use Closure;
+use Illuminate\Contracts\Routing\Middleware;
+
+class Track implements Middleware {
+
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return mixed
+     */
+    public function handle($request, Closure $next)
+    {
+        $this->app['ab']->track($request);
+
+        return $next($request);
+    }
+
+}
