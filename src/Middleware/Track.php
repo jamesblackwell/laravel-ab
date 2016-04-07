@@ -1,11 +1,10 @@
 <?php namespace Jenssegers\AB\Middleware;
 
 use Closure;
-use Illuminate\Contracts\Routing\Middleware;
 use Illuminate\Contracts\Foundation\Application;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class Track implements Middleware {
+class Track {
 
     /**
      * The application implementation.

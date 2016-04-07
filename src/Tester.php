@@ -218,6 +218,9 @@ class Tester {
 
         $this->session->set('experiment', $experiment->name);
 
+        // DEBUG: WHY DOES NOT WORK IN L5.2!!!
+        dd($experiment->name);
+
         // Since there is an ongoing experiment, increase the pageviews.
         // This will only be incremented once during the whole experiment.
         $this->pageview();
