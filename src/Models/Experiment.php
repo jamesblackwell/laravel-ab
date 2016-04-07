@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model as Eloquent;
 class Experiment extends Eloquent {
 
     protected $primaryKey = 'name';
+    public $incrementing = false;
 
     public $timestamps = false;
 
@@ -16,7 +17,7 @@ class Experiment extends Eloquent {
         parent::__construct($attributes);
 
         // Set the connection based on the config.
-        $this->connection = Config::get('ab::connection');
+        $this->connection = Config::get('ab.connection');
     }
 
     public function goals()
@@ -26,9 +27,9 @@ class Experiment extends Eloquent {
 
     public function scopeActive($query)
     {
-        if ($experiments = Config::get('ab::experiments'))
+        if ($experiments = Config::get('ab.experiments'))
         {
-            return $query->whereIn('name', Config::get('ab::experiments'));
+            return $query->whereIn('name', Config::get('ab.experiments'));
         }
 
         return $query;
