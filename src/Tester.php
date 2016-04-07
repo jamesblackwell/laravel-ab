@@ -38,9 +38,11 @@ class Tester {
         // Don't track if there is no active experiment.
         if ( ! $this->session->get('experiment')) return;
 
+        $experiment_name = $this->session->get('experiment');
+
         // Since there is an ongoing experiment, increase the pageviews.
         // This will only be incremented once during the whole experiment.
-        $this->pageview();
+        $this->pageview($experiment_name);
 
         // Check current and previous urls.
         $root = $request->root();
@@ -78,14 +80,18 @@ class Tester {
     public function experiment($target = null)
     {
         // Get the existing or new experiment.
-        $experiment = $this->session->get('experiment') ?: $this->nextExperiment();
+        $experiment_name = $this->session->get('experiment') ?: $this->nextExperiment();
+
+        // Since there is an ongoing experiment, increase the pageviews.
+        // This will only be incremented once during the whole experiment.
+        $this->pageview($experiment_name);
 
         if (is_null($target))
         {
-            return $experiment;
+            return $experiment_name;
         }
 
-        return $experiment == $target;
+        return $experiment_name == $target;
     }
 
     /**
@@ -93,12 +99,12 @@ class Tester {
      *
      * @return void
      */
-    public function pageview()
+    public function pageview($experiment_name)
     {
         // Only interact once per experiment.
         if ($this->session->get('pageview')) return;
 
-        $experiment = Experiment::firstOrNew(['name' => $this->experiment()]);
+        $experiment = Experiment::firstOrNew(['name' => $experiment_name]);
         $experiment->visitors++;
         $experiment->save();
 
@@ -146,14 +152,14 @@ class Tester {
      *
      * @param string $experiment
      */
-    public function setExperiment($experiment)
+    public function setExperiment($experiment_name)
     {
-        if ($this->session->get('experiment') != $experiment)
+        if ($this->session->get('experiment') != $experiment_name)
         {
-            $this->session->set('experiment', $experiment);
+            $this->session->set('experiment', $experiment_name);
 
             // Increase pageviews for new experiment.
-            $this->nextExperiment($experiment);
+            $this->pageview($experiment_name);
         }
     }
 
@@ -217,10 +223,6 @@ class Tester {
         }
 
         $this->session->set('experiment', $experiment->name);
-
-        // Since there is an ongoing experiment, increase the pageviews.
-        // This will only be incremented once during the whole experiment.
-        $this->pageview();
 
         return $experiment->name;
     }
