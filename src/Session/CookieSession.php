@@ -9,7 +9,7 @@ class CookieSession implements SessionInterface {
      *
      * @var string
      */
-    protected $cookieName = 'ab';
+    protected $cookiePrefix = 'ab';
 
     /**
      * A copy of the session data.
@@ -30,7 +30,7 @@ class CookieSession implements SessionInterface {
      */
     public function __construct()
     {
-        $this->data = Cookie::get($this->cookieName, []);
+        $this->data = [];
     }
 
     /**
@@ -38,7 +38,9 @@ class CookieSession implements SessionInterface {
      */
     public function get($name, $default = null)
     {
-        return array_get($this->data, $name, $default);
+        $cookieName = $this->fullCookieName($name);
+
+        return Cookie::get($cookieName);
     }
 
     /**
@@ -48,7 +50,10 @@ class CookieSession implements SessionInterface {
     {
         $this->data[$name] = $value;
 
-        return Cookie::queue($this->cookieName, $this->data, $this->minutes);
+        $cookieName = $this->fullCookieName($name);
+        $cookieValue = $value;
+
+        return Cookie::queue($cookieName, $cookieValue, $this->minutes);
     }
 
     /**
@@ -56,9 +61,17 @@ class CookieSession implements SessionInterface {
      */
     public function clear()
     {
-        $this->data = [];
+        foreach($this->data as $name => $value) {
+            $cookieName = $this->fullCookieName($name);
 
-        return Cookie::queue($this->cookieName, null, -2628000);
+            Cookie::forget($cookieName);
+        }
+
+        return $this->data = [];
+    }
+
+    private function fullCookieName($name) {
+        return $this->cookiePrefix . '.' . $name;
     }
 
 }
